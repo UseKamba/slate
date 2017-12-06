@@ -8,7 +8,6 @@ toc_footers:
   - <a href='https://developers.usekamba.com'>© 2017 USEKAMBA</a>
 
 includes:
-  - errors
 
 search: false
 ---
@@ -57,14 +56,221 @@ Todos os métodos de pagamento quando permitidos são mostrados para o consumido
 
 # Autenticação
 
-Use suas credenciais para receber a sua chave de API e segurar os dados da sua aplicação. A primeira coisa que você precisa fazer para conseguir as suas credenciais é criar um identificador comerciante. Cada identificador comerciante possui uma chave de API para produção e uma chave de API para testes. Utilize estas chaves para:
+Para interagir com a API você precisará de chaves de API. A primeira coisa que você deve fazer para conseguir as suas credenciais é criar uma conta comerciante. Cada conta comerciante possui um identificador de comerciante chave de API para produção e chave de API para testes.
 
 * Selecione a conta comerciante relacionada à você.
-* Especifique se você está testando ou trabalhando com pagamentos reais.
-* Mostre à API Kamba que é realmente você nas solicitações HTTP ao fazer uso da chave de API.
+* Especifique se você está testando ou trabalhando com pagamentos reais ao escolher entre uma chave de API de produção ou de teste.
+* Inclua sempre sua chave de API no cabeçalho HTTP `Authorization` assim: `Authorization: Token SEU_TOKEN_AQUI`.
 
 <aside class="notice">
-A chave de API deve ser enviada junto com cada solicitação da API, fornecendo-nos na chamada HTTP no cabeçalho `header` `Authorization`. 
+É escusado dizer que a chave de API deve substituir SEU_TOKEN_AQUI acima. 
 </aside>
 
 É muito importante manter quaisquer chaves de API de em segurança. Nunca compartilhe com terceiros. No entanto, se ocorrer uma situação de que a segurança de uma chave esteja comprometida, você deve rapidamente gerar outra chave de API que automaticamente expira a anterior. Não se esqueça de aplicar esta nova chave nas requisições do seu código. Até que você o faça, suas integrações não irão funcionar.
+
+# Transações
+
+> Exemplo do objeto JSON de uma transação.
+
+```json
+{
+  "id": "a81eda08-d4fe-4dd2-82ee-57203f2d2bbe",
+  "intent": "PAY_CONTACT",
+  "from": {
+      "id": "ze66174f-6041-4b1d-a3eb-08c320e26591",
+      "firstname": "Amarildo",
+      "lastname": "Lucas",
+      "phone_number": "+244924426615",
+      "email": "amarildo@hotmail.com",
+      "avatar_url": null
+  },
+  "to": {
+      "id": "f840f8c3-5683-487e-8e3e-e0d199c3128c",
+      "firstname": "Alexandre",
+      "lastname": "Juca",
+      "phone_number": "+244912507079",
+      "email": "alexandre@hotmail.com",
+      "avatar_url": null
+  },
+  "initial_amount": {
+      "total": 3500.00,
+      "fee": 0.00
+  },
+  "amount": {
+      "subtotal": 3500.00
+  },
+  "description": "Dinheiro da parabólica!",
+  "status": "PAID",
+  "created_at": "2017-11-16T16:23:18.532Z",
+  "updated_at": "2017-11-16T16:23:18.585Z",
+  "transaction_type": "PAYMENT"
+}
+```
+
+Uma transação representa o envio de dinheiro entre um remetente `payer` para um destinatário `receiver`. O identificador de uma transação criada com sucesso pertence a ambos. O identificador do remetente `receiver` pode pertencer à um usuário particular ou à um comerciante.
+
+Parâmetros | Descrição
+--------- | -----------
+id | Identificador único da transação 
+intent | Intenção da transação
+amount | Valor monetário da transação
+currency | Nome da moeda
+status | Estado da transação. Ex: `paid`
+payer_id | Identificador único do remetente
+receiver_id | identificador único do destinatário
+description | Descrição da transação
+transaction_type | Tipo de transação. Sempre `PAYMENT`
+created_at | Data de criação da transação
+
+## Obter uma transação específica
+
+> Exemplo de solicitação HTTP para obter uma transação.
+
+```shell
+curl "https://sandbox.usekamba.com/private/v1.1/users/{user_id}/transactions"
+  -X GET
+  -H "Authorization: Token ZVR4ZwjD2VQbDrDBrAIqqgtt"
+```
+
+> O comando acima retorna o objeto JSON a seguir:
+
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+  "id": "a81eda08-d4fe-4dd2-82ee-57203f2d2bbe",
+  "intent": "PAY_CONTACT",
+  "from": {
+      "id": "ze66174f-6041-4b1d-a3eb-08c320e26591",
+      "firstname": "Amarildo",
+      "lastname": "Lucas",
+      "phone_number": "+244924426615",
+      "email": "amarildo@hotmail.com",
+      "avatar_url": null
+  },
+  "to": {
+      "id": "f840f8c3-5683-487e-8e3e-e0d199c3128c",
+      "firstname": "Alexandre",
+      "lastname": "Juca",
+      "phone_number": "+244912507079",
+      "email": "alexandre@hotmail.com",
+      "avatar_url": null
+  },
+  "initial_amount": {
+      "total": 3500.00,
+      "fee": 0.00
+  },
+  "amount": {
+      "subtotal": 3500.00
+  },
+  "description": "Dinheiro da parabólica!",
+  "status": "PAID",
+  "created_at": "2017-11-16T16:23:18.532Z",
+  "updated_at": "2017-11-16T16:23:18.585Z",
+  "transaction_type": "PAYMENT"
+}
+```
+
+Obtem-se uma transação específica através de um `ID` de transação. Este `ID` pertence ao remetente tanto como ao destinatário.
+
+### Solicitação HTTP
+
+- **URL de teste:** `GET https://sandbox.usekamba.com/private/v1.1/users/{user_id}/transactions`
+- **URL de produção:** `GET https://api.usekamba.com/private/v1.1/users/{user_id}/transactions`
+
+### Parâmetros para URL
+
+Parâmetros | Descrição
+--------- | -----------
+user_id | Identificador único do usuário particular iniciando a transação
+
+### Estado HTTP e códigos de erro
+Parâmetros | Descrição
+--------- | -----------
+400 | Transferência falhou
+403 | Chave de API não autorizada
+
+## Criar uma transação
+
+> Exemplo de solicitação POST HTTP para obter uma transação.
+
+```shell
+curl -X POST "https://sandbox.usekamba.com/private/v1.1/users/{user_id}/transactions" \
+  -H "Authorization: Token ZVR4ZwjD2VQbDrDBrAIqqgtt" \
+  -d "receiver_id=af724bac-28f9-4edf-a8f5-54a73da235ee" \  
+  -d "payer_id=fe99174f-6041-4z1d-a3eb-08c320e26591" \
+  -d "amount=3500.00" \
+  -d "description=2 pizzas!" \
+  -d "intent=PAY_CONTACT" 
+```
+
+> O comando acima retorna o objeto JSON a seguir:
+
+```json
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=utf-8
+
+{
+  "id": "a81eda08-d4fe-4dd2-82ee-57203f2d2bbe",
+  "intent": "PAY_CONTACT",
+  "from": {
+      "id": "ze66174f-6041-4b1d-a3eb-08c320e26591",
+      "firstname": "Amarildo",
+      "lastname": "Lucas",
+      "phone_number": "+244924426615",
+      "email": "amarildo@hotmail.com",
+      "avatar_url": null
+  },
+  "to": {
+      "id": "f840f8c3-5683-487e-8e3e-e0d199c3128c",
+      "firstname": "Alexandre",
+      "lastname": "Juca",
+      "phone_number": "+244912507079",
+      "email": "alexandre@hotmail.com",
+      "avatar_url": null
+  },
+  "initial_amount": {
+      "total": 3500.00,
+      "fee": 0.00
+  },
+  "amount": {
+      "subtotal": 3500.00
+  },
+  "description": "Dinheiro da parabólica!",
+  "status": "PAID",
+  "created_at": "2017-11-16T16:23:18.532Z",
+  "updated_at": "2017-11-16T16:23:18.585Z",
+  "transaction_type": "PAYMENT"
+}
+```
+
+Envia dinheiro de um remetente para um destinatário.
+
+### Solicitação HTTP
+
+- **URL de teste:** `POST https://sandbox.usekamba.com/private/v1.1/users/{user_id}/transactions`
+- **URL de produção:** `POST https://api.usekamba.com/private/v1.1/users/{user_id}/transactions`
+
+### Parâmetros de URL
+
+Parámetros | Descrição
+--------- | -----------
+user_id | O `ID` do usuário remetente iniciando a transação
+
+### Parâmetros para a solicitação HTTP
+
+Parâmetros | Descrição
+--------- | -----------
+intent | Intenção da transação
+amount | Valor monetário da transação
+currency | Nome da moeda
+payer_id | Identificador único do remetente
+receiver_id | identificador único do destinatário
+description | Descrição da transação
+
+### Estado HTTP e códigos de erro
+Parâmetros | Descrição
+--------- | -----------
+400 | Transferência falhou
+403 | Chave de API não autorizada
