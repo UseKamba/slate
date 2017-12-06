@@ -14,25 +14,41 @@ search: false
 
 # Introdução
 
-Use a API do Kamba para integrar pagamentos online ou presenciais para o seu site, aplicativo ou estabelecimento. 
+Use a API do Kamba para integrar uma infraestrutura de pagamentos online para o seu site ou aplicativo. 
+
+## Ponto de partida
+
+As URLs bases da API são:
+
+- **Produção:** `https://api.usekamba.com`
+- **Testes:** `https://sandbox.usekamba.com`
+
+## Solicitações HTTP
+
+> Exemplo de solicitação POST HTTP.
+
+```json
+POST https://api.usekamba.com/private/v1.1/bank_accounts
+Content-Type: application/json
+Authorization: Token F84222z531Y242909m960
+
+{
+  "foo": "bar"
+}
+
+... ou ...
+
+GET https://api.usekamba.com/private/v1.1/bank_accounts/707177c3-bf15-4e7e-b37c-55c3898d9bf4
+```
+
+Todas as solicitações HTTP devem fornecer no cabeçalho `Authorization: Token CHAVE_API` e `Content-Type: application/json`. O corpo das solicitações e respostas são codificados em JSON.
+
+Solicitações devem ser enviadas sempre usando HTTPS nas URLs.
 
 ## Chaves de API 
 As suas chaves de API `api_keys` estão disponíveis no painel de controle para desenvolvedores. Use a chave de teste para testar suas integrações e mude para uma chave de produção quando desejar submeter sua integração para um ambiente com clientes reais. 
 
-## SDKs e Bibliotecas 
-Se possível, seria mais sábio deixar este nível de integração para os nossos SDKs cliente e servidor. Isso permite que você esteja no controle focando na sua lógica de negócios sem reinventar a roda e deixar a infraestrutura de pagamentos por nossa conta.
-
-Os SDKs da API Kamba estão disponíveis para diversas linguagens de programação. Nós fornecemos bibliotecas para a sua loja virtual/e-commerce, seus aplicativos Android ou iOS.
-
-| SDKs para cliente        | SDKs para servidor           | 
-| ------------- |:-------------:|
-| Android      | Ruby | 
-| iOS      | java | 
-| JavaScript      | |
-
-<aside class="notice">
-Os SDKs para cliente necessitam de autorização. É usado um sistema de chaves de API (cliente-token) - a forma mais flexível de autorização.
-</aside>
+## Paginação
 
 ## Métodos de Pagamento
 
@@ -54,19 +70,54 @@ Todos os métodos de pagamento quando permitidos são mostrados para o consumido
 4. O consumidor no Checkout, escolhe um método de pagamento e faz o pagamento. Este processo é inteiramente cuidado pela Kamba. Você não precisa fazer nada aqui.
 5. Quando o pagamento é feito o Kamba irá redirecionar de volta para o seu site dependendo do estado `status` do pagamento.  
 
+# SDKs e Bibliotecas 
+Se possível, seria mais sábio deixar este nível de integração para os nossos SDKs cliente e servidor. Isso permite que você esteja no controle focando na sua lógica de negócios sem reinventar a roda e deixar a infraestrutura de pagamentos por nossa conta.
+
+Os SDKs da API Kamba estão disponíveis para diversas linguagens de programação. Nós fornecemos bibliotecas para a sua loja virtual/e-commerce, seus aplicativos Android ou iOS.
+
+| SDKs para cliente        | SDKs para servidor           | 
+| ------------- |:-------------:|
+| Android      | Ruby | 
+| iOS      | java | 
+| JavaScript      | |
+
+<aside class="notice">
+Os SDKs para cliente necessitam de autorização. É usado um sistema de chaves de API (cliente-token) - a forma mais flexível de autorização.
+</aside>
+
+## Integração Servidor
+
+## Integração Aplicativos
+
 # Autenticação
 
-Para interagir com a API você precisará de chaves de API. A primeira coisa que você deve fazer para conseguir as suas credenciais é criar uma conta comerciante. Cada conta comerciante possui um identificador de comerciante chave de API para produção e chave de API para testes.
+Para interagir com a API você precisará de chaves de API. A primeira coisa que você deve fazer para conseguir as suas credenciais é criar uma conta comerciante. Cada conta comerciante possui um identificador de comerciante com chaves de API para produção e teste.
 
 * Selecione a conta comerciante relacionada à você.
 * Especifique se você está testando ou trabalhando com pagamentos reais ao escolher entre uma chave de API de produção ou de teste.
-* Inclua sempre sua chave de API no cabeçalho HTTP `Authorization` assim: `Authorization: Token SEU_TOKEN_AQUI`.
+* Inclua sempre sua chave de API no cabeçalho HTTP `Authorization` dessa forma: `Authorization: Token CHAVE_API`.
 
 <aside class="notice">
-É escusado dizer que a chave de API deve substituir SEU_TOKEN_AQUI acima. 
+É escusado dizer que a chave de API deve substituir CHAVE_API acima. 
 </aside>
 
-É muito importante manter quaisquer chaves de API de em segurança. Nunca compartilhe com terceiros. No entanto, se ocorrer uma situação de que a segurança de uma chave esteja comprometida, você deve rapidamente gerar outra chave de API que automaticamente expira a anterior. Não se esqueça de aplicar esta nova chave nas requisições do seu código. Até que você o faça, suas integrações não irão funcionar.
+É muito importante manter quaisquer chaves de API de em segurança. Nunca compartilhe com terceiros. No entanto, se ocorrer uma situação inesperada, as chaves de API devem ser geradas novamente. Não se esqueça de aplicar estas novas chaves no cabeçalho das solicitações HTTP do seu código para suas integrações funcionarem como esperado.
+
+# Saldo da Carteira
+
+# Contas Bancárias
+
+# Métodos de Pagamento
+
+# Solicitações de Pagamento
+
+# Bancos
+
+# Depósitos
+
+# Levantamentos
+
+# Comerciantes
 
 # Transações
 
